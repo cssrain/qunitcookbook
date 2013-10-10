@@ -16,3 +16,28 @@ Qunit Cookbook 中文版
 好吧，虽然有其他的JavaScript单元测试框架，你已经决定要看看QUnit。QUnit是jQuery的单元测试框架，用于各种各样的项目。
 
 要使用QUnit，你只需要在你的HTML页面引入两个QUnit文件。QUnit由两部分组成，qunit.js:TestRunner和测试框架，qunit.css:测试套件结果页的样式。
+
+```javascript
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit basic example</title>
+  <link rel="stylesheet" href="/resources/qunit.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="/resources/qunit.js"></script>
+  <script>
+    test( "a basic test example", function() {
+      var value = "hello";
+      equal( value, "hello", "We expect value to be hello" );
+    });
+  </script>
+</body>
+</html>
+```
+
+在浏览器中打开此文件，结果如下图所示:
+<iframe src="http://qunitjs.com/resources/example-cookbook-1-basics.html" width="576" height="420" scrolling="no" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
