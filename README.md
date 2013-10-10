@@ -16,8 +16,8 @@ Qunit Cookbook 中文版
 好吧，虽然有其他的JavaScript单元测试框架，你已经决定要看看QUnit。QUnit是jQuery的单元测试框架，用于各种各样的项目。
 
 要使用QUnit，你只需要在你的HTML页面引入两个QUnit文件。QUnit由两部分组成，
-qunit.js: TestRunner和测试框架，
-qunit.css:测试套件结果页的样式。
+* qunit.js: TestRunner和测试框架，
+* qunit.css:测试套件结果页的样式。
 
 ```javascript
 <!DOCTYPE html>
@@ -364,12 +364,12 @@ QUnit有一堆内置功能来解决这个问题。最有趣的一个，只需点
 运行模块内的测试用例几乎是相同的方式，除非你使用右上角的下拉列表选择模块来运行。它会设置一个`“module = N”`的查询字符串，其中“N”是编码后的模块名称，例如`“?module=testEnvironment％20with％20object”`。
 
 ##更多教程
-[A short QUnit introduction in english](http://www.swift-lizard.com/2009/11/24/test-driven-development-with-jquery-qunit/)
-[A short QUnit introduction in german](http://www.aspnetzone.de/blogs/robertobez/archive/2009/12/02/jQuery-javascript-qunit-unit-test-framework.aspx)
-[Nettuts on Testing with QUnit](http://net.tutsplus.com/tutorials/javascript-ajax/how-to-test-your-javascript-code-with-qunit/)
-[Running QUnit tests with Rhino](http://twoguysarguing.wordpress.com/2010/11/02/make-javascript-tests-part-of-your-build-qunit-rhino/)
-[Martin Fowler on Eradicating Non-Determinism in Tests. Not QUnit specific, but very useful advice and a lot of it applies to JavaScript](http://martinfowler.com/articles/nonDeterminism.html)
-[ScriptJunkie article on Automating JavaScript Testing with QUnit](http://msdn.microsoft.com/en-us/scriptjunkie/gg749824.aspx)
+* [A short QUnit introduction in english](http://www.swift-lizard.com/2009/11/24/test-driven-development-with-jquery-qunit/)
+* [A short QUnit introduction in german](http://www.aspnetzone.de/blogs/robertobez/archive/2009/12/02/jQuery-javascript-qunit-unit-test-framework.aspx)
+* [Nettuts on Testing with QUnit](http://net.tutsplus.com/tutorials/javascript-ajax/how-to-test-your-javascript-code-with-qunit/)
+* [Running QUnit tests with Rhino](http://twoguysarguing.wordpress.com/2010/11/02/make-javascript-tests-part-of-your-build-qunit-rhino/)
+* [Martin Fowler on Eradicating Non-Determinism in Tests. Not QUnit specific, but very useful advice and a lot of it applies to JavaScript](http://martinfowler.com/articles/nonDeterminism.html)
+* [ScriptJunkie article on Automating JavaScript Testing with QUnit](http://msdn.microsoft.com/en-us/scriptjunkie/gg749824.aspx)
 
 如果你想了解更多有关javascript单元测试(不仅仅是QUnit), 看看这本书 [《测试驱动的JavaScript开发》](http://book.douban.com/subject/10483528/)
 
