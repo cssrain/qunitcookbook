@@ -40,4 +40,5 @@ Qunit Cookbook 中文版
 ```
 
 在浏览器中打开此文件，结果如下图所示:
-<iframe src="http://qunitjs.com/resources/example-cookbook-1-basics.html" width="576" height="420" scrolling="no" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
