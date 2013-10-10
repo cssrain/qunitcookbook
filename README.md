@@ -255,3 +255,120 @@ test( "keylogger api behavior", function() {
 
 [keyvent.js](https://github.com/gtramontina/keyvent.js) - "键盘事件模拟器."
 
+##保持测试原子化
+###问题
+当测试混在一起，可能使本应通过的测试失败，或本应失败的测试却通过。这是因为一个测试从前一个测试的副作用中获得了非法的结果：
+```
+test( "2 asserts", function() {
+  var $fixture = $( "#qunit-fixture" );
+
+  $fixture.append( "<div>hello!</div>" );
+  equal( $( "div", $fixture ).length, 1, "div added successfully!" );
+
+  $fixture.append( "<span>hello!</span>" );
+  equal( $( "span", $fixture ).length, 1, "span added successfully!" );
+});
+```
+第一个append()加入了一个`<div>`,第二个`append()`没有考虑到这点。
+
+###解决方案
+使用的`test()`方法保持测试原子化，注意要保持每个断言干净，避免任何可能的副作用。您应该只依靠`#qunit-fixture`元素内的`fixture`标签。修改和依靠其它东西可能有副作用：
+```
+test( "Appends a div", function() {
+  var $fixture = $( "#qunit-fixture" );
+
+  $fixture.append( "<div>hello!</div>" );
+  equal( $( "div", $fixture ).length, 1, "div added successfully!" );
+});
+
+test( "Appends a span", function() {
+  var $fixture = $( "#qunit-fixture" );
+
+  $fixture.append("<span>hello!</span>" );
+  equal( $( "span", $fixture ).length, 1, "span added successfully!" );
+});
+```
+QUnit在每次测试后将重置`#qunit-fixture`内的元素，删除事件。只要你只使用fixture内的元素，就不必在测试后手动清理来保证他们的原子化。
+
+###讨论
+除了​​`#qunit-fixture`和在“高效开发”一节介绍的过滤，QUnit也提供了一个`?noglobals`标志。请看下面的测试：
+```
+test( "global pollution", function() {
+  window.pollute = true;
+  ok( pollute, "nasty pollution" );
+});
+```
+通常运行时可以通过。但带`noglobals`标志运行`ok()`将导致测试失败，因为QUnit检测到它污染了window对象。
+
+没有必要一直使用该标志，但它可以很方便的检测全局命名空间污染，在接入了第三方库时这可能是个问题。并且它有助于检测测试中副作用所造成的错误。
+
+##分组测试
+###问题
+你已经分离了所有的测试用例，来保持原子化并避免副作用，但你还想将他们逻辑地组织起来，并能按组运行。
+
+###解决方案
+您可以使用module()函数来把测试组合到一起：
+```
+module( "group a" );
+test( "a basic test example", function() {
+  ok( true, "this test is fine" );
+});
+test( "a basic test example 2", function() {
+  ok( true, "this test is fine" );
+});
+
+module( "group b" );
+test( "a basic test example 3", function() {
+  ok( true, "this test is fine" );
+});
+test( "a basic test example 4", function() {
+  ok( true, "this test is fine" );
+});
+```
+在`module()`调用后的测试用例将被归入该模块。测试结果中会加上模块的名称。然后，您可以用该模块的名称来按组运行测试用例（参阅“高效开发”一节）。
+
+###讨论
+除了将测试用例​​分组，`module()`还可以用来抽取公用代码。`module()`函数接受可选的第二个参数，来定义在测试用例运行前后调用的函数：
+```
+module( "module", {
+  setup: function() {
+    ok( true, "one extra assert per test" );
+  }, teardown: function() {
+    ok( true, "and one extra assert after each test" );
+  }
+});
+test( "test with setup and teardown", function() {
+  expect( 2 );
+});
+```
+您可以一起指定`setup`和`teardown`，或只是其中之一。
+
+不带额外的参数再次调用`module()`会重置之前模块定义的`setup/teardown`函数。
+
+##高效开发
+###问题
+一旦你的测试套件需要较长的时间运行，你将想要避免浪费时间在等待结果上。
+
+###解决方案
+QUnit有一堆内置功能来解决这个问题。最有趣的一个，只需点击激活页眉的`“Hide passed tests”`复选框，则QUnit将只显示失败的测试用例。这本身对速度没什么影响，但有利于把注意力集中在失败的测试用例上。
+
+如果你把另一QUnit功能考虑进来，它将变得更有趣，这是默认启用的，通常不明显。当一个测试用例失败，QUnit将该测试用例的名称存储在sessionStorage。下次运行时，该测试用例将优先运行。输出顺序不受影响，仅执行顺序。结合`“Hide passed tests”`复选框，您就能在页眉尽快看到失败的测试用例(如果仍然失败)。
+
+###讨论
+自动重新排序是默认发生的。这意味着你的测试用例必须是原子化的。如果不是，你会看到随机的非确定性错误。修复这一点通常是正确的做法。如果你真的绝望了，你可以设置`QUnit.config.reorder = false`。
+
+除了自动重新排序，还有几个手动选项可用。您可以点击任意测试用例旁边的“Return”链接来重新运行测试。这将给查询字符串增加一个`“testNumber = N”`参数，其中“N”是该测试用例的编号。然后，您可以刷新页面来只运行该测试用例，或使用浏览器的后退按钮返回到运行所有测试用例的状态。
+
+运行模块内的测试用例几乎是相同的方式，除非你使用右上角的下拉列表选择模块来运行。它会设置一个`“module = N”`的查询字符串，其中“N”是编码后的模块名称，例如`“?module=testEnvironment％20with％20object”`。
+
+##更多教程
+[A short QUnit introduction in english](http://www.swift-lizard.com/2009/11/24/test-driven-development-with-jquery-qunit/)
+[A short QUnit introduction in german](http://www.aspnetzone.de/blogs/robertobez/archive/2009/12/02/jQuery-javascript-qunit-unit-test-framework.aspx)
+[Nettuts on Testing with QUnit](http://net.tutsplus.com/tutorials/javascript-ajax/how-to-test-your-javascript-code-with-qunit/)
+[Running QUnit tests with Rhino](http://twoguysarguing.wordpress.com/2010/11/02/make-javascript-tests-part-of-your-build-qunit-rhino/)
+[Martin Fowler on Eradicating Non-Determinism in Tests. Not QUnit specific, but very useful advice and a lot of it applies to JavaScript](http://martinfowler.com/articles/nonDeterminism.html)
+[ScriptJunkie article on Automating JavaScript Testing with QUnit](http://msdn.microsoft.com/en-us/scriptjunkie/gg749824.aspx)
+
+如果你想了解更多有关javascript单元测试(不仅仅是QUnit), 看看这本书 [《测试驱动的JavaScript开发》](http://book.douban.com/subject/10483528/)
+
+"注：这本书的印刷之后，QUnit有所改变."
