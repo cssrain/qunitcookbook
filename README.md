@@ -40,5 +40,7 @@ Qunit Cookbook 中文版
 ```
 
 在浏览器中打开此文件，结果如下图所示:
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
+![alt text](https://github.com/cssrain/qunitcookbook/blob/master/src/qunit_1.png "测试结果1")
+
 
