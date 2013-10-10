@@ -42,7 +42,7 @@ Qunit Cookbook 中文版
 在浏览器中打开此文件，结果如下图所示:
 ![alt text](https://raw.github.com/cssrain/qunitcookbook/master/src/qunit_1.png "测试结果1")
 
-在<body>元素中唯一必要的标记是一个ID ="qunit-fixture"的<div> 。所有QUnit测试都需要它，即使它本身是空的。它提供了测试用的fixture，在“保持测试原子化”一节中会详细说明。
+在'<body>'元素中唯一必要的标记是一个ID ="qunit-fixture"的<div> 。所有QUnit测试都需要它，即使它本身是空的。它提供了测试用的fixture，在“保持测试原子化”一节中会详细说明。
 
 有趣的的部分是跟在qunit.js后面的<script>元素。它包含一个test函数调用，带有两个参数：一个字符串和一个函数。字符串表示测试的名称，稍后会用来显示测试结果。函数包含了实际的测试代码，包含一个或多个断言。该示例使用两个断言，ok()和equal() ，在“断言结果”一节中会详细说明。
 
