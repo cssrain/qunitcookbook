@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Test5</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="qunit/qunit-1.12.0.css">
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script src="qunit/qunit-1.12.0.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+test( "a test", function() {
+  expect( 2 );
+  function calc( x, operation ) {
+    return operation( x );
+  }
+  var result = calc( 2, function( x ) {
+    ok( true, "calc() calls operation function" );
+    return x * x;
+  });
+  equal( result, 4, "2 square equals 4" );
+});
+
+test( "a test", 2, function() {
+  function calc( x, operation ) {
+    return operation( x );
+  }
+  var result = calc( 2, function( x ) {
+    ok( true, "calc() calls operation function" );
+    return x * x;
+  });
+  equal( result, 4, "2 square equals 4" );
+});
+
+test( "a test", 1, function() {
+  var $body = $( "body" );
+  $body.on( "click", function() {
+    ok( true, "body was clicked!" );
+  });
+  $body.trigger( "click" );
+});
+</script>
+</body>
+</html>

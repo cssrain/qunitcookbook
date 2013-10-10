@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Test6</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="qunit/qunit-1.12.0.css">
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script src="qunit/qunit-1.12.0.js"></script>
+<script>
+asyncTest( "asynchronous test: one second later!", function() {
+  expect( 1 );
+
+  setTimeout(function() {
+    ok( true, "Passed and ready to resume!" );
+    start();
+  }, 1000);
+});
+</script>
+</body>
+</html>
