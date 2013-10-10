@@ -114,5 +114,86 @@ test( "deepEqual test", function() {
 ```
 在一般情况下，deepEqual()是更好的选择。如果你明确地不想比较两个值的内容，则仍然可以使用equal()。
 
+##同步回调
+###问题
+有时候，在你的代码环境可能会阻止断言执行，导致测试静默失败。
 
+###解决方案
+QUnit提供了一个特殊的断言，用来定义一个测试用例中断言的总数。当测试完成后没有正确数量的断言就会失败，不管其他断言(如果有的话)的结果如何。
 
+用法简单直白，只需要在测试开始时调用`expect()`，唯一的参数是期望的断言总数：
+```
+test( "a test", function() {
+  expect( 2 );
+
+  function calc( x, operation ) {
+    return operation( x );
+  }
+
+  var result = calc( 2, function( x ) {
+    ok( true, "calc() calls operation function" );
+    return x * x;
+  });
+
+  equal( result, 4, "2 square equals 4" );
+});
+```
+另外，期望的断言总数可以作为第二个参数传递给`test()`：
+```
+test( "a test", 2, function() {
+
+  function calc( x, operation ) {
+    return operation( x );
+  }
+
+  var result = calc( 2, function( x ) {
+    ok( true, "calc() calls operation function" );
+    return x * x;
+  });
+
+  equal( result, 4, "2 square equals 4" );
+});
+```
+实例：
+```
+test( "a test", 1, function() {
+  var $body = $( "body" );
+
+  $body.on( "click", function() {
+    ok( true, "body was clicked!" );
+  });
+
+  $body.trigger( "click" );
+});
+```
+
+###讨论
+`expect()`只在测试回调时最有用。当所有的断言都运行在`test`函数的作用域内时， `expect()`没有额外的作用——防止断言运行的任何错误都会导致测试最终失败，因为TestRunner会捕获错误并让单元测试失败。
+
+##异步回调
+###问题
+虽然`expect()`在测试同步回调（见“同步回调”小节）很有用，但异步回调时就怂了。异步回调与TestRunner队列和执行测试的方式有冲突。当test内的代码的发起了一个timeout或interval或Ajax请求，TestRunner将继续运行剩余的代码，以及之后的测试用例，而不是等待异步操作的结果。
+
+###解决方案
+用`asyncTest()`代替`test()`来包装你的断言，并在该测试用例执行完成并准备好继续时调用`start()`：
+```
+asyncTest( "asynchronous test: one second later!", function() {
+  expect( 1 );
+
+  setTimeout(function() {
+    ok( true, "Passed and ready to resume!" );
+    start();
+  }, 1000);
+});
+```
+实际的例子：
+```
+asyncTest( "asynchronous test: video ready to play", 1, function() {
+  var $video = $( "video" );
+
+  $video.on( "canplaythrough", function() {
+    ok( true, "video has loaded and is ready to play" );
+    start();
+  });
+});
+```
