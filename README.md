@@ -44,9 +44,9 @@ Qunit Cookbook 中文版
 
 在`<body>`元素中唯一必要的标记是一个`ID ="qunit-fixture"`的`<div>` 。所有QUnit测试都需要它，即使它本身是空的。它提供了测试用的fixture，在“保持测试原子化”一节中会详细说明。
 
-有趣的的部分是跟在qunit.js后面的`<script>`元素。它包含一个test函数调用，带有两个参数：一个字符串和一个函数。字符串表示测试的名称，稍后会用来显示测试结果。函数包含了实际的测试代码，包含一个或多个断言。该示例使用两个断言:ok()和equal() ，在“断言结果”一节中会详细说明。
+有趣的的部分是跟在`qunit.js`后面的`<script>`元素。它包含一个`test`函数调用，带有两个参数：一个字符串和一个函数。字符串表示测试的名称，稍后会用来显示测试结果。函数包含了实际的测试代码，包含一个或多个断言。该示例使用两个断言:`ok()`和`equal()` ，在“断言结果”一节中会详细说明。
 
-请注意，没有document-ready块。TestRunner负责处理那些：调用test()只是把测试用例添加到队列中，其执行将被延迟并由TestRunner和控制。
+请注意，没有`document-ready`块。TestRunner负责处理那些：调用`test()`只是把测试用例添加到队列中，其执行将被延迟并由TestRunner和控制。
 
 ## 讨论
 测试套件的页眉显示如下几个部分：页面的标题，测试状态条（绿色表示全通过，红色条表示至少有一个测试失败），若干复选框用于过滤测试结果，一个蓝色条显示浏览器信息（方便对不同的浏览器测试结果截图）。
@@ -68,5 +68,49 @@ Qunit Cookbook 中文版
 
 ##解决方案
 QUnit提供了三种断言。
+
+###ok(truthy[,message])
+最基本的一条是`ok()` ，只需要一个参数。如果参数的计算结果为true，则断言通过，否则断言失败。此外，它接受一个字符串用于显示测试结果：
+```javascript
+test( "ok test", function() {
+  ok( true, "true succeeds" );
+  ok( "non-empty", "non-empty string succeeds" );
+
+  ok( false, "false fails" );
+  ok( 0, "0 fails" );
+  ok( NaN, "NaN fails" );
+  ok( "", "empty string fails" );
+  ok( null, "null fails" );
+  ok( undefined, "undefined fails" );
+});
+```
+
+###equal( actual, expected [, message ] )
+`equal`断言采用简单的比较操作符`（==）`比较实际值和期望值。当它们相等时，则断言通过，否则断言失败。失败时，除了以一个给定的消息之外，实际值和期望值也被显示在测试结果中：
+```javascript
+test( "equal test", function() {
+  equal( 0, 0, "Zero; equal succeeds" );
+  equal( "", 0, "Empty, Zero; equal succeeds" );
+  equal( "", "", "Empty, Empty; equal succeeds" );
+  equal( 0, 0, "Zero, Zero; equal succeeds" );
+
+  equal( "three", 3, "Three, 3; equal fails" );
+  equal( null, false, "null, false; equal fails" );
+});
+```
+相比`ok()` ，`equal()`使得容易调试失败的测试，因为它显式给出了造成测试失败的值。
+
+如果你需要一个严格的比较`(===)`，使用`strictEqual()`。
+
+###deepEqual( actual, expected [, message ] )
+`deepEqual()`断言可以像`equal()`那样使用，但它适用的场景更多。它采用了更精确的比较操作符`（===）`而不是简单的`（==）`。这样一来，` undefined`不等于`null`，`0`，或空字符串（`""`）。它也可以比较对象的内容，使`{key:value}`等于`{key:value}`，即使两个对象是不同的实例。
+
+`deepEqual()`也可以处理NaN，日期，正则表达式，数组和函数，而`equal()`只是检查对象的实例：
+```javascript
+test( "deepEqual test", function() {
+  var obj = { foo: "bar" };
+  deepEqual( obj, { foo: "bar" }, "Two objects can be the same in value" );
+});
+```
 
 
