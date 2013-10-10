@@ -112,5 +112,7 @@ test( "deepEqual test", function() {
   deepEqual( obj, { foo: "bar" }, "Two objects can be the same in value" );
 });
 ```
+在一般情况下，deepEqual()是更好的选择。如果你明确地不想比较两个值的内容，则仍然可以使用equal()。
+
 
 
