@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Test8</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="qunit/qunit-1.12.0.css">
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script src="qunit/qunit-1.12.0.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+function KeyLogger( target ) {
+  if ( !(this instanceof KeyLogger) ) {
+    return new KeyLogger( target );
+  }
+  this.target = target;
+  this.log = [];
+
+  var self = this;
+
+  this.target.off( "keydown" ).on( "keydown", function( event ) {
+    self.log.push( event.keyCode );
+  });
+}
+
+test( "keylogger api behavior", function() {
+
+  var event,
+      $doc = $( document ),
+      keys = KeyLogger( $doc );
+
+  // trigger event
+	// Create a new jQuery.Event object with specified event properties.
+  event = $.Event( "keydown", { keyCode: 9 } );
+	// trigger an artificial keydown event with keyCode 9
+  $doc.trigger( event );
+
+  // verify expected behavior
+  equal( keys.log.length, 1, "a key was logged" );
+  equal( keys.log[ 0 ], 9, "correct key was logged" );
+
+});
+</script>
+</body>
+</html>

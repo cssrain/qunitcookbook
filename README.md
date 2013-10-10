@@ -197,3 +197,61 @@ asyncTest( "asynchronous test: video ready to play", 1, function() {
   });
 });
 ```
+##测试用户操作
+###问题
+依赖于用户动作的代码，不能简单地调用一个函数来测试。通常，元素事件会绑定匿名函数，如click，这些需要模拟。
+
+###解决方案
+您可以使用jQuery的`trigger()`方法来触发事件并测试预期行为。如果不希望原生的浏览器事件被触发，可以用`triggerHandler()`只执行绑定的事件处理程序。这对测试链接的click事件非常有用，因为`trigger()`会导致浏览器跳转，在测试时我们几乎不会期望这种行为。
+
+假设我们有一个简单的键盘记录器要测试：
+```
+function KeyLogger( target ) {
+  if ( !(this instanceof KeyLogger) ) {
+    return new KeyLogger( target );
+  }
+  this.target = target;
+  this.log = [];
+
+  var self = this;
+
+  this.target.off( "keydown" ).on( "keydown", function( event ) {
+    self.log.push( event.keyCode );
+  });
+}
+```
+我们可以手动触发按键事件来观察记录器是否正常工作：
+```
+test( "keylogger api behavior", function() {
+
+  var event,
+      $doc = $( document ),
+      keys = KeyLogger( $doc );
+
+  // trigger event
+  event = $.Event( "keydown" );
+  event.keyCode = 9;
+  $doc.trigger( event );
+
+  // verify expected behavior
+  equal( keys.log.length, 1, "a key was logged" );
+  equal( keys.log[ 0 ], 9, "correct key was logged" );
+
+});
+```
+
+###讨论
+如果你的事件处理程序不依赖于任何特定的事件属性，你可以简单地调用`trigger(eventType)`。否则你需要使用`$.Event`来创建一个事件对象，并设置必要的属性，如前面所示。
+
+同样重要的，是为复杂的行为触发所有相关的事件，如dragging，它由mousedown，至少一个mousemove，和mouseup事件构成。请记住，即使是一些看似简单的事件，实际上也是复合的，例如，一个click实际上是一个mousedown，mouseup，然后才是click。是否真的需要触发所有这三个事件取决于被测代码。大多数情况下只触发click就行了。
+
+如果那还不够，你有几个可选框架，能帮助模拟用户事件：
+
+[syn](https://github.com/bitovi/syn) “是一个人工合成的事件库，几乎可以像一个真实的用户的行为一样处理typing，clicking，moving和dragging。” 基于QUnit的FuncUnit在使用它，来对Web应用程序做功能测试。
+
+[JSRobot](http://tinymce.ephox.com/jsrobot) “一个Web的应用程序测试工具，可以产生真正的按键，而不是简单地模拟了JavaScript事件触发，这使得按键能触发浏览器实际的行为，别的框架做不到这点。”
+
+[DOH Robot](http://dojotoolkit.org/reference-guide/1.8/util/dohrobot.html) “提供了一个API，使测试人员能使用真实的，跨平台的，系统级的输入事件来自动化UI测试”。这可以让你非常接近“真正的”浏览器事件，只是需要使用Java applets。
+
+[keyvent.js](https://github.com/gtramontina/keyvent.js) - "键盘事件模拟器."
+
